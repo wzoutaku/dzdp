@@ -21,8 +21,6 @@ import java.util.Random;
  * 前端控制器
  * </p>
  *
- * @author 虎哥
- * @since 2021-12-22
  */
 @Slf4j
 @RestController
@@ -38,21 +36,10 @@ public class UserController {
     /**
      * 发送手机验证码
      */
-    @PostMapping("code")
+    @PostMapping("/code")
     public Result sendCode(@RequestParam("phone") String phone, HttpSession session) {
         // TODO 发送短信验证码并保存验证码
-        //校验手机号
-        if(RegexUtils.isPhoneInvalid(phone)){
-            return Result.fail("手机号格式错误");
-        }
-
-        //符合就生成验证码
-        String code = RandomUtil.randomNumbers(6);
-
-        //保存验证码到session
-        session.setAttribute("code", code);
-
-        return Result.ok();
+        return userService.sendCode(phone, session);
     }
 
     /**
@@ -62,20 +49,8 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session){
         // TODO 实现登录功能
-        String phone = loginForm.getPhone();
-        if(RegexUtils.isPhoneInvalid(phone)){
-            return Result.fail("手机号格式错误");
-        }
 
-        Object cacheCode = session.getAttribute("code");
-        String code = loginForm.getCode();
-        if(code == null || !cacheCode.toString().equals(code)){
-            return Result.fail("验证码错误");
-        }
-
-        //User user = query()
-
-        return Result.fail("功能未完成");
+        return userService.login(loginForm, session);
     }
 
     /**
